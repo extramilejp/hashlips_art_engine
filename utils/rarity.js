@@ -3,16 +3,14 @@
 const path = require("path");
 const isLocal = typeof process.pkg === "undefined";
 const basePath = isLocal ? process.cwd() : path.dirname(process.execPath);
-const fs = require("fs");
 const layersDir = `${basePath}/layers`;
 
-const { layerConfigurations } = require(path.join(basePath, "/src/config.js"));
+const { layerConfigurations, readFromMetaData } = require(path.join(basePath, "/src/config.js"));
 
 const { getElements } = require("../src/main.js");
 
 // read json data
-let rawdata = fs.readFileSync(`${basePath}/build/json/_metadata.json`);
-let data = JSON.parse(rawdata);
+let data = readFromMetaData();
 let editionSize = data.length;
 
 let rarityData = [];

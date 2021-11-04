@@ -12,12 +12,12 @@ const {
   description,
   namePrefix,
   network,
+  readFromMetaData,
   solanaMetadata,
 } = require(path.join(basePath, "/src/config.js"));
 
 // read json data
-let rawdata = fs.readFileSync(`${basePath}/build/json/_metadata.json`);
-let data = JSON.parse(rawdata);
+let data = readFromMetaData();
 
 data.forEach((item) => {
   if (network == NETWORK.sol) {

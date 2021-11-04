@@ -8,13 +8,17 @@ const { createCanvas, loadImage } = require("canvas");
 const buildDir = `${basePath}/build`;
 
 console.log(path.join(basePath, "/src/config.js"));
-const { preview } = require(path.join(basePath, "/src/config.js"));
+const { preview, readFromMetaData } = require(path.join(basePath, "/src/config.js"));
 
 // read json data
-const rawdata = fs.readFileSync(`${basePath}/build/json/_metadata.json`);
-const metadataList = JSON.parse(rawdata);
+const metadataList = readFromMetaData();
 
 const saveProjectPreviewImage = async (_data) => {
+  if (_data.length === 0) {
+    // Shout from the mountain tops
+    console.log('no meta data found. no preview given');
+    process.exit(1);
+  }
   // Extract from preview config
   const { thumbWidth, thumbPerRow, imageRatio, imageName } = preview;
   // Calculate height on the fly

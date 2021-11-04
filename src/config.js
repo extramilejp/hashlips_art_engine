@@ -1,5 +1,6 @@
 "use strict";
 
+const fs = require("fs");
 const path = require("path");
 const isLocal = typeof process.pkg === "undefined";
 const basePath = isLocal ? process.cwd() : path.dirname(process.execPath);
@@ -103,6 +104,17 @@ const preview_gif = {
   imageName: "preview.gif",
 };
 
+const readFromMetaData = () => {
+  try {
+    // read json data
+    const rawdata = fs.readFileSync(`${basePath}/build/json/_metadata.json`);
+    return JSON.parse(rawdata);
+  } catch (e) {
+    console.log(`_meta data not imported. error log is ${e.toString()}`);
+    return [];
+  }
+};
+
 module.exports = {
   format,
   baseUri,
@@ -112,6 +124,7 @@ module.exports = {
   layerConfigurations,
   rarityDelimiter,
   preview,
+  readFromMetaData,
   shuffleLayerConfigurations,
   debugLogs,
   extraMetadata,
