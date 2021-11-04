@@ -4,7 +4,9 @@ const metaDataSet = readFromMetaData();
 
 const getCachedMetaDataSet = () => metaDataSet;
 
-module.exports = { getCachedMetaDataSet };
+const getCachedMetaCount = () => metaDataSet.length;
+
+module.exports = { getCachedMetaCount, getCachedMetaDataSet };
 
 
 
