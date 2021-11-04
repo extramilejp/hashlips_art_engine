@@ -13,6 +13,7 @@
   },
   "scripts": {
     "build": "node index.js",
+    "sequential_build": "node index.js 1",
     "generate": "node index.js",
     "rarity": "node utils/rarity.js",
     "preview": "node utils/preview.js",

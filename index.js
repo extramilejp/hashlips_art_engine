@@ -9,6 +9,6 @@ const { startCreating, buildSetup } = require(path.join(
 ));
 
 (() => {
-  buildSetup();
+  buildSetup(process.argv.slice(2).length === 0);
   startCreating();
 })();

@@ -29,6 +29,8 @@ const {
   solanaMetadata,
   gif,
 } = require(path.join(basePath, "/src/config.js"));
+const { getCachedMetaDataSet } = require("./metaCache.js");
+
 const canvas = createCanvas(format.width, format.height);
 const ctx = canvas.getContext("2d");
 var metadataList = [];
@@ -39,19 +41,26 @@ const HashlipsGiffer = require(path.join(
   basePath,
   "/modules/HashlipsGiffer.js"
 ));
+const {getCachedMetaCount} = require('./metaCache');
 
 let hashlipsGiffer = null;
 
-const buildSetup = () => {
-  if (fs.existsSync(buildDir)) {
-    fs.rmdirSync(buildDir, { recursive: true });
+const buildSetup = (shouldRemove = true) => {
+  if (shouldRemove) {
+    if (fs.existsSync(buildDir)) {
+      fs.rmdirSync(buildDir, { recursive: true });
+    }
+    fs.mkdirSync(buildDir);
+    fs.mkdirSync(path.join(buildDir, "/json"));
+    fs.mkdirSync(path.join(buildDir, "/images"));
+    if (gif.export) {
+      fs.mkdirSync(path.join(buildDir, "/gifs"));
+    }
+    metadataList = [];
+    return;
   }
-  fs.mkdirSync(buildDir);
-  fs.mkdirSync(path.join(buildDir, "/json"));
-  fs.mkdirSync(path.join(buildDir, "/images"));
-  if (gif.export) {
-    fs.mkdirSync(path.join(buildDir, "/gifs"));
-  }
+  metadataList = getCachedMetaDataSet();
+  metadataList.forEach(x => dnaList.add(x.dna));
 };
 
 const getRarityWeight = (_str) => {
@@ -271,8 +280,8 @@ const removeQueryStrings = (_dna) => {
 }
 
 const isDnaUnique = (_DnaList = new Set(), _dna = "") => {
-  const _filteredDNA = filterDNAOptions(_dna);
-  return !_DnaList.has(_filteredDNA);
+  const _shaDNA = sha1(filterDNAOptions(_dna));
+  return !_DnaList.has(_shaDNA);
 };
 
 const createDna = (_layers) => {
@@ -333,9 +342,11 @@ const startCreating = async () => {
   let editionCount = 1;
   let failedCount = 0;
   let abstractedIndexes = [];
+  const metaCounter = getCachedMetaCount();
+  const initialCount = network == NETWORK.sol ? metaCounter : metaCounter + 1;
   for (
-    let i = network == NETWORK.sol ? 0 : 1;
-    i <= layerConfigurations[layerConfigurations.length - 1].growEditionSizeTo;
+    let i = initialCount;
+    i <= layerConfigurations[layerConfigurations.length - 1].growEditionSizeTo + initialCount;
     i++
   ) {
     abstractedIndexes.push(i);
@@ -404,7 +415,7 @@ const startCreating = async () => {
             )}`
           );
         });
-        dnaList.add(filterDNAOptions(newDna));
+        dnaList.add(sha1(filterDNAOptions(newDna)));
         editionCount++;
         abstractedIndexes.shift();
       } else {
