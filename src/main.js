@@ -93,27 +93,21 @@ const getElements = (path) => {
 };
 
 const layersSetup = (layersOrder) => {
-  const layers = layersOrder.map((layerObj, index) => ({
-    id: index,
-    elements: getElements(`${layersDir}/${layerObj.name}/`),
-    name:
-      layerObj.options?.["displayName"] != undefined
-        ? layerObj.options?.["displayName"]
-        : layerObj.name,
-    blend:
-      layerObj.options?.["blend"] != undefined
-        ? layerObj.options?.["blend"]
-        : "source-over",
-    opacity:
-      layerObj.options?.["opacity"] != undefined
-        ? layerObj.options?.["opacity"]
-        : 1,
-    bypassDNA:
-      layerObj.options?.["bypassDNA"] !== undefined
-        ? layerObj.options?.["bypassDNA"]
-        : false
-  }));
-  return layers;
+  return layersOrder.map((layerObj, id) => {
+    const name = layerObj.options !== undefined && layerObj.options.displayName !== undefined ? layerObj.options.displayName : layerObj.name;
+    const blend = layerObj.options !== undefined && layerObj.options.blend !== undefined ? layerObj.options.blend : "source-over";
+    const opacity = layerObj.options !== undefined && layerObj.options.opacity !== undefined ? layerObj.options.opacity : 1;
+    const bypassDNA = layerObj.options !== undefined && layerObj.options.bypassDNA !== undefined ? layerObj.options.bypassDNA : false;
+
+    return {
+      id,
+      elements: getElements(`${layersDir}/${layerObj.name}/`),
+      name,
+      blend,
+      opacity,
+      bypassDNA
+    };
+  });
 };
 
 const saveImage = (_editionCount) => {
