@@ -337,12 +337,12 @@ function shuffle(array) {
   return array;
 }
 
-const startCreating = async () => {
+const startCreating = async (shouldRemove = true) => {
   let layerConfigIndex = 0;
   let editionCount = 1;
   let failedCount = 0;
   let abstractedIndexes = [];
-  const metaCounter = getCachedMetaCount();
+  const metaCounter = shouldRemove ? 0 : getCachedMetaCount();
   const initialCount = network == NETWORK.sol ? metaCounter : metaCounter + 1;
   for (
     let i = initialCount;
